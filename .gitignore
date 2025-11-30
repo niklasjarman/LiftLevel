@@ -15,6 +15,7 @@ instance/
 
 # Data files (user data will be stored here, but we might want to track structure)
 data/*.json
+data/*.db
 !data/.gitkeep
 
 # IDE

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import os
 import sqlite3
 from datetime import datetime
@@ -152,7 +152,17 @@ def get_workout_history(limit=10):
 
 @app.route('/')
 def index():
-    return '<h1>LiftLevel App</h1><p>Backend test</p>'
+    """Main page - render the workout tracking interface"""
+    user_data = get_user_data()
+    exercises = get_exercises()
+    workout_history = get_workout_history(10)
+    xp_progress = get_xp_progress(user_data['total_xp'], user_data['level'])
+    
+    return render_template('index.html',
+                         user_data=user_data,
+                         exercises=exercises,
+                         workout_history=workout_history,
+                         xp_progress=xp_progress)
 
 @app.route('/api/log-workout', methods=['POST'])
 def log_workout():

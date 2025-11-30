@@ -86,19 +86,56 @@ def calculate_xp(weight, reps, sets):
     """Calculate XP: weight * reps * sets / 10"""
     return int((weight * reps * sets) / 10)
 
+def get_xp_required_for_level(level):
+    """
+    Get total XP required to reach a specific level using formula-based progression.
+    Formula: XP = 1000 * (level - 1)^1.8 for levels 2-10
+    This creates a smooth exponential curve that gets progressively harder.
+    Max level: 10
+    """
+    if level == 1:
+        return 0
+    elif level > 10:
+        level = 10  # Cap at level 10
+    
+    # Formula: 1000 * (level - 1)^1.8
+    # This gives us: L2=1000, L3≈2800, L4≈5200, L5≈8200, L6≈11800, etc.
+    xp_required = int(1000 * ((level - 1) ** 1.8))
+    return xp_required
+
 def calculate_level(xp):
-    """Calculate level based on XP. Level 1: 0-999, Level 2: 1000-1999, etc."""
-    return (xp // 1000) + 1
+    """
+    Calculate level based on XP using formula-based progression.
+    Max level: 10
+    """
+    # Check each level from 10 down to 1
+    for level in range(10, 0, -1):
+        xp_required = get_xp_required_for_level(level)
+        if xp >= xp_required:
+            return level
+    return 1
 
 def get_xp_progress(xp, level):
     """Get XP progress for current level"""
-    xp_for_current_level = (level - 1) * 1000
+    xp_for_current_level = get_xp_required_for_level(level)
     xp_in_current_level = xp - xp_for_current_level
-    xp_needed_for_next = 1000
+    
+    # Calculate XP needed for next level (if not max level)
+    if level >= 10:
+        # Max level reached
+        return {
+            'current': xp_in_current_level,
+            'needed': 0,
+            'percentage': 100
+        }
+    
+    xp_for_next_level = get_xp_required_for_level(level + 1)
+    xp_needed_for_next = xp_for_next_level - xp_for_current_level
+    
     return {
         'current': xp_in_current_level,
         'needed': xp_needed_for_next,
-        'percentage': min(100, (xp_in_current_level / xp_needed_for_next) * 100)
+        'percentage': min(100, (xp_in_current_level / xp_needed_for_next) * 100) if xp_needed_for_next > 0 else 100
     }
 
 # Database helper functions

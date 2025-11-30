@@ -166,3 +166,50 @@ document.querySelector('.close').addEventListener('click', closeLevelUpModal);
 // Add smooth scroll behavior
 document.documentElement.style.scrollBehavior = 'smooth';
 
+// Reset character functionality
+document.getElementById('reset-btn').addEventListener('click', async () => {
+    const confirmed = confirm(
+        'Are you sure you want to reset your character?\n\n' +
+        'This will:\n' +
+        '• Reset your XP to 0\n' +
+        '• Reset your level to 1\n' +
+        '• Clear all workout history\n\n' +
+        'This action cannot be undone!'
+    );
+    
+    if (!confirmed) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/reset-character', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update UI
+            updateUserStats(data);
+            
+            // Clear workout history
+            const historyDiv = document.getElementById('workout-history');
+            historyDiv.innerHTML = '<p class="no-history">No workouts logged yet. Start your journey!</p>';
+            
+            // Show success message
+            alert('Character reset successfully! You\'re back to Level 1.');
+            
+            // Reload page to ensure everything is in sync
+            window.location.reload();
+        } else {
+            throw new Error('Failed to reset character');
+        }
+    } catch (error) {
+        alert('Error resetting character. Please try again.');
+        console.error('Error:', error);
+    }
+});
+

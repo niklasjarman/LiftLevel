@@ -215,6 +215,32 @@ def get_user_data_api():
         'xp_progress': xp_progress
     })
 
+@app.route('/api/reset-character', methods=['POST'])
+def reset_character():
+    """API endpoint to reset character (XP, level, and workout history)"""
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    # Reset user data
+    cursor.execute('UPDATE user_data SET total_xp = 0, level = 1 WHERE id = 1')
+    
+    # Clear workout history
+    cursor.execute('DELETE FROM workout_history')
+    
+    conn.commit()
+    conn.close()
+    
+    # Get updated data
+    user_data = get_user_data()
+    xp_progress = get_xp_progress(user_data['total_xp'], user_data['level'])
+    
+    return jsonify({
+        'success': True,
+        'total_xp': 0,
+        'level': 1,
+        'xp_progress': xp_progress
+    })
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, port=5000)

@@ -164,7 +164,7 @@ As you level up, your character evolves with increasingly impressive designs:
 This project was developed with assistance from AI tools:
 
 - **Cursor**: Code generation, debugging, and UI design
-- **AI Image Generators**: Character evolution images (Hugging Face Spaces, Craiyon, etc.)
+- **DALL·E**: Character evolution images
 
 ## 📄 License
 

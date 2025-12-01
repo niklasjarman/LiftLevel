@@ -74,6 +74,11 @@ header h1 {
     transform: translateY(0);
 }
 
+.reset-section {
+    margin-top: 20px;
+    text-align: right;
+}
+
 .main-content {
     display: grid;
     gap: 30px;
